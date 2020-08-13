@@ -11,12 +11,12 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 void *brkPoint0 = NULL;
 
-/* findChunk: search for the first chunk that fits (size equal or more) the request
-              of the user.
-     chunkStatus *headptr: pointer to the first block of memory in the heap
-     unsigned int size: size requested by the user
-     retval: a poiter to the block which fits the request 
-	     or NULL, in case there is no such block in the list
+/* findChunk: busca el primer fragmento que se ajuste (tamaño igual o mayor) a la solicitud
+               del usuario.
+      chunkStatus * headptr: puntero al primer bloque de memoria en el montón
+      unsigned int size: tamaño solicitado por el usuario
+      retval: un indicador del bloque que se ajusta a la solicitud
+o NULL, en caso de que no exista tal bloque en la lista
 */
 chunkStatus* findChunk(chunkStatus *headptr, unsigned int size)
 {
@@ -34,13 +34,13 @@ chunkStatus* findChunk(chunkStatus *headptr, unsigned int size)
   return ptr;  
 }
 
-
-/* splitChunk: split one big block into two. The first will have the size requested by the user.
-  	       the second will have the remainder.
-     chunkStatus* ptr: pointer to the block of memory which is going to be splitted.
-     unsigned int size: size requested by the user
-     retval: void, the function modifies the list
+/* splitChunk: divide un bloque grande en dos. El primero tendrá el tamaño solicitado por el usuario.
+   el segundo tendrá el resto.
+      chunkStatus * ptr: puntero al bloque de memoria que se va a dividir.
+      unsigned int size: tamaño solicitado por el usuario
+      retval: void, la función modifica la lista
 */
+
 void splitChunk(chunkStatus* ptr, unsigned int size)
 {
   chunkStatus *newChunk;	
@@ -61,11 +61,10 @@ void splitChunk(chunkStatus* ptr, unsigned int size)
   ptr->next = newChunk;
 }
 
-
-/* inscreaseAllocation: increase the amount of memory available in the heap, chaging its breakpoint
-     chunkStatus* ptr: pointer to the block of memory which is going to be splitted.
-     unsigned int size: size requested by the user
-     retval: void, the function modifies the list
+/* inscreaseAllocation: aumenta la cantidad de memoria disponible en el montón, cambiando su punto de interrupción
+      chunkStatus * ptr: puntero al bloque de memoria que se va a dividir.
+      unsigned int size: tamaño solicitado por el usuario
+      retval: void, la función modifica la lista
 */
 chunkStatus* increaseAllocation(chunkStatus *lastVisitedPtr, unsigned int size)
 {
@@ -90,9 +89,9 @@ chunkStatus* increaseAllocation(chunkStatus *lastVisitedPtr, unsigned int size)
 }
 
 
-/* mergeChunkPrev: merge one freed chunk with its predecessor (in case it is free as well)
-     chunkStatus* freed: pointer to the block of memory to be freed.
-     retval: void, the function modifies the list
+/* mergeChunkPrev: fusiona un fragmento liberado con su predecesor (en caso de que también sea gratis)
+      chunkStatus * liberado: puntero al bloque de memoria que se va a liberar.
+      retval: void, la función modifica la lista
 */
 void mergeChunkPrev(chunkStatus *freed)
 { 
@@ -108,9 +107,9 @@ void mergeChunkPrev(chunkStatus *freed)
   }
 }
 
-/* mergeChunkNext: merge one freed chunk with the following chunk (in case it is free as well)
-     chunkStatus* freed: pointer to the block of memory to be freed.
-     retval: void, the function modifies the list
+/* mergeChunkNext: fusiona un fragmento liberado con el siguiente fragmento (en caso de que también sea gratuito)
+      chunkStatus * liberado: puntero al bloque de memoria que se va a liberar.
+      retval: void, la función modifica la lista
 */
 void mergeChunkNext(chunkStatus *freed)
 {  
@@ -127,9 +126,9 @@ void mergeChunkNext(chunkStatus *freed)
 }
 
 
-/* printList: print the entire liked list. For debug purposes
-     chunkStatus* headptr: points to the begin of the list
-     retval: void, just print
+/* printList: imprime la lista completa de Me gusta. Para fines de depuración
+      chunkStatus * headptr: apunta al comienzo de la lista
+      retval: void, solo imprime
 */
 void printList(chunkStatus *headptr)
 {
@@ -149,14 +148,14 @@ int i = 0;
   }
 }
 
-/* mymalloc: allocates memory on the heap of the requested size. The block
-             of memory returned should always be padded so that it begins
-             and ends on a word boundary.
-     unsigned int size: the number of bytes to allocate.
-     retval: a pointer to the block of memory allocated or NULL if the 
-             memory could not be allocated. 
-             (NOTE: the system also sets errno, but we are not the system, 
-                    so you are not required to do so.)
+/* mymalloc: asigna memoria en el montón del tamaño solicitado. El bloque
+              de la memoria devuelta siempre debe rellenarse para que comience
+              y termina en un límite de palabras.
+      unsigned int size: el número de bytes a asignar.
+      retval: un puntero al bloque de memoria asignado o NULL si el
+              no se pudo asignar memoria.
+              (NOTA: el sistema también establece errno, pero no somos el sistema,
+                     por lo que no está obligado a hacerlo).
 */
 void *mymalloc(unsigned int _size) 
 {
@@ -228,11 +227,11 @@ void *mymalloc(unsigned int _size)
   }  
 }
 
-/* myfree: unallocates memory that has been allocated with mymalloc.
-     void *ptr: pointer to the first byte of a block of memory allocated by 
-                mymalloc.
-     retval: 0 if the memory was successfully freed and 1 otherwise.
-             (NOTE: the system version of free returns no error.)
+/* myfree: desasigna la memoria que se ha asignado con mymalloc.
+      void * ptr: puntero al primer byte de un bloque de memoria asignado por
+                 mymalloc.
+      retval: 0 si la memoria se liberó correctamente y 1 en caso contrario.
+              (NOTA: la versión del sistema gratuita no devuelve ningún error).
 */
 unsigned int myfree(void *ptr) {
 	//#if SYSTEM_MALLOC
