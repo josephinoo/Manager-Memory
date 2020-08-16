@@ -11,7 +11,7 @@ Un asignador de memoria simplificado que implementa las siguientes funciones
 ## FINALIZE
 - último comando llamado;
 
-- Asignar esos `N` bytes asignados por` INICIALIZAR`.
+- Asignar esos `N` bytes asignados por`INITIALIZE`.
 
 ## DUMP
 - muestra los bytes del mapa en formato hexadecimal;
@@ -26,7 +26,7 @@ Un asignador de memoria simplificado que implementa las siguientes funciones
 
 ## FREE INDEX
 
-- libera la memoria a partir de la posición `INDICE`;
+- libera la memoria a partir de la posición `INDEX`;
 
 - `INDEX` es una posición devuelta por` ALLOC`.
 
@@ -43,14 +43,14 @@ Un asignador de memoria simplificado que implementa las siguientes funciones
 
     - ** FREE **: el número de bytes no asignados y el número de zonas continuas libres en la memoria;
 
-    - ** USO **: el número de bytes usados ​​en la arena, la eficiencia y fragmentación de la asignación;
+    - ** USAGE **: el número de bytes usados ​​en la arena, la eficiencia y fragmentación de la asignación;
 
-    - ** ASIGNACIONES **: muestra para cada área, si es libre o asignada junto con su tamaño;
+    - **ALLOCATIONS **: muestra para cada área, si es libre o asignada junto con su tamaño;
 
     - ** MAP LENGTH **: muestra una cadena de caracteres `LENGTH`, que ilustra la memoria administrada:` * `representa un área asignada y` .` una no asignada.
 	
 ## ALLOCALIGNED SIZE ALIGN
-- hace lo mismo que "ALLOC", pero asigna solo a un índice que es un múltiplo de "ALINEAR", donde "ALINEAR" es una potencia de 2.
+- hace lo mismo que "ALLOC", pero asigna solo a un índice que es un múltiplo de "ALIGN", donde "ALIGN" es una potencia de 2.
 
 ## REALLOC INDEX SIZE
 
@@ -67,4 +67,4 @@ Un asignador de memoria simplificado que implementa las siguientes funciones
 
 - la función `FILL` corre el riesgo de sobrescribir bytes donde no deberían tener acceso;
 
-- la función `SAFE_FILL` comprueba la escritura en un` INDICE` válido (asignado) y un número de bytes que no exceda el área donde se realiza la escritura.
+- la función `SAFE_FILL` comprueba la escritura en un`INDEX` válido (asignado) y un número de bytes que no exceda el área donde se realiza la escritura.
