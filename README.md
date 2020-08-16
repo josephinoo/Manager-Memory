@@ -1,4 +1,4 @@
-# Memory-Allocator
+# Memory-Manager 
 
 Un asignador de memoria simplificado que implementa las siguientes funciones
 
@@ -56,7 +56,7 @@ Un asignador de memoria simplificado que implementa las siguientes funciones
 
 - reasigne el área de memoria desde la posición `INDEX` con la nueva dimensión` SIZE`;
 
-- la posición en la que se realiza la reasignación es la primera de izquierda a derecha en la que caben los bytes "TAMAÑO".
+- la posición en la que se realiza la reasignación es la primera de izquierda a derecha en la que caben los bytes "LENGTH".
 ## DEFRAG
 
 - pega todas las áreas asignadas a la izquierda, de modo que, después de ejecutar el comando, la fragmentación disminuye a * 0% *;
