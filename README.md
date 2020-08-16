@@ -1,76 +1,70 @@
 # Memory-Allocator
 
-Un alocator de memorie simplificat, ce implementeaza urmatoarele functii
+Un asignador de memoria simplificado que implementa las siguientes funciones
 
 ## INITIALIZE N
 
-- prima comanda apelata;
+- el primer comando llamado;
 
-- aloca `N` octeti care reprezinta zona de memorie cu care se va lucra.
+- asignar `N` bytes que representan el área de memoria con la que se trabajará.
 
 ## FINALIZE
+- último comando llamado;
 
-- ultima comanda apelata;
-
-- dealoca acei `N` octeti alocati de `INITIALIZE`.
+- Asignar esos `N` bytes asignados por` INICIALIZAR`.
 
 ## DUMP
+- muestra los bytes del mapa en formato hexadecimal;
 
-- afiseaza octetii hartii in format hexazecimal;
-
-- similar cu hexdump.
+- similar a hexdump.
 
 
 ## ALLOC SIZE
+- Asignar bytes `SIZE` en la primera posición de izquierda a derecha en la arena donde sea posible;
 
-- aloca `SIZE` octeti pe prima pozitie de la stanga la dreapta din arena in care acest lucru este posibil;
-
-- returneaza adresa de inceput a zonei alocate.
+- devuelve la dirección de inicio del área asignada.
 
 ## FREE INDEX
 
-- elibereaza memoria ce incepe la pozitia `INDEX`;
+- libera la memoria a partir de la posición `INDICE`;
 
-- `INDEX` este o pozitie returnata de `ALLOC`.
+- `INDEX` es una posición devuelta por` ALLOC`.
 
 ## FILL INDEX SIZE VALUE
+- establece bytes `SIZE` comenzando con la posición` INDEX` en el valor` VALUE`;
 
-- seteaza `SIZE` octeti incepand cu pozitia `INDEX` la valoarea `VALUE`;
-
-- similar cu un `memset`.
+- similar a un `memset`.
 
 ## SHOW INFO
 
-- ofera statistici despre starea memoriei;
+- proporciona estadísticas sobre el estado de la memoria;
 
-- **INFO** poate fi:
+- ** INFO ** puede ser:
 
-	- **FREE**: numarul de octeti nealocati si numarul de zone continue libere din memorie;
-	
-	- **USAGE**: numarul de octeti folositi din arena, eficienta si fragmentarea alocarii;
-	
-	- **ALLOCATIONS**: afiseaza pentru fiecare zona, daca este libera sau alocata impreuna cu dimensiunea acestora;
-	
-	- **MAP LENGTH**: afiseaza un sir de `LENGTH` caractere, care ilustreaza memoria gestionata: `*` reprezinta o zona alocata, iar `.` una nealocata.
+    - ** FREE **: el número de bytes no asignados y el número de zonas continuas libres en la memoria;
+
+    - ** USO **: el número de bytes usados ​​en la arena, la eficiencia y fragmentación de la asignación;
+
+    - ** ASIGNACIONES **: muestra para cada área, si es libre o asignada junto con su tamaño;
+
+    - ** MAP LENGTH **: muestra una cadena de caracteres `LENGTH`, que ilustra la memoria administrada:` * `representa un área asignada y` .` una no asignada.
 	
 ## ALLOCALIGNED SIZE ALIGN
-
-- face acelasi lucru ca `ALLOC`, dar aloca doar la un index care este multiplu de `ALIGN`, unde `ALIGN` este o putere a lui 2.
+- hace lo mismo que "ALLOC", pero asigna solo a un índice que es un múltiplo de "ALINEAR", donde "ALINEAR" es una potencia de 2.
 
 ## REALLOC INDEX SIZE
 
-- realoca zona de memorie de la pozitia `INDEX` cu noua dimensiune de `SIZE`;
+- reasigne el área de memoria desde la posición `INDEX` con la nueva dimensión` SIZE`;
 
-- pozitia in care se face realocarea este prima de la stanga la dreapta in care incap `SIZE` octeti.
-
+- la posición en la que se realiza la reasignación es la primera de izquierda a derecha en la que caben los bytes "TAMAÑO".
 ## DEFRAG
 
-- alipeste toate zonele alocate la stanga, astfel incat, dupa rularea comenzii, fragmentarea scade la *0%*;
+- pega todas las áreas asignadas a la izquierda, de modo que, después de ejecutar el comando, la fragmentación disminuye a * 0% *;
 
-- returneaza un vector care face legatura dintre vechii indecsi ai zonelor de memorie si cei noi.
+- devuelve un vector que hace la conexión entre los índices antiguos de las áreas de memoria y los nuevos.
 
 ## SAFE_FILL INDEX SIZE VALUE
 
-- functia `FILL` risca sa suprascrie octeti unde nu ar trebuis sa aiba acces;
+- la función `FILL` corre el riesgo de sobrescribir bytes donde no deberían tener acceso;
 
-- functia `SAFE_FILL` verifica sa se scrie la un `INDEX` valid (alocat) si un numar de octeti care nu depaseste zona in care se face scrierea.
+- la función `SAFE_FILL` comprueba la escritura en un` INDICE` válido (asignado) y un número de bytes que no exceda el área donde se realiza la escritura.

@@ -1,4 +1,4 @@
-
+// Copyright 2017 Dutu Teodor-Stefan
 
 #include "./allocator.h"
 #define CMDMAX 1000
@@ -10,7 +10,7 @@ int main(void) {
     arena_t arena;
 
     if (cmd == NULL) {
-        printf("[-]¡No se pudo cargar el comando!\n");
+        printf("Command could not be loaded!\n");
         return -1;
     }
 
@@ -25,70 +25,70 @@ int main(void) {
     return 0;
 }
 
-int parseCmd(char *cmd, arena_t *block) {
+int parseCmd(char *cmd, arena_t *arena) {
     int size, pos, value, align;
     const char *delim = " \n";
     char *arg = strtok(cmd, delim);
 
     if (!strcmp(arg, "ALLOC")) {
         size = atoi(arg = strtok(NULL, delim));
-        printf("%d\n", asignar(block, size));
+        printf("%d\n", asignar(arena, size));
     } else if (!strcmp(arg, "FREE")) {
         pos = atoi(arg = strtok(NULL, delim));
-        FREE(block, pos);
+        FREE(arena, pos);
     } else if (!strcmp(arg, "FILL")) {
         pos = atoi(arg = strtok(NULL, delim));
         size = atoi(arg = strtok(NULL, delim));
         value = atoi(arg = strtok(NULL, delim));
-        llenar(block, pos, size, value);
+        llenar(arena, pos, size, value);
     } else if (!strcmp(arg, "SFILL")) {
         pos = atoi(arg = strtok(NULL, delim));
         size = atoi(arg = strtok(NULL, delim));
         value = atoi(arg = strtok(NULL, delim));
-        safe_fill(block, pos, size, value);
+        safe_fill(arena, pos, size, value);
     } else if (!strcmp(arg, "DUMP")) {
-        volcado(block);
+        volcado(arena);
     } else if (!strcmp(arg, "SHOW")) {
         arg = strtok(NULL, delim);
-        mostrar(block, arg);
+        mostrar(arena, arg);
     } else if (!strcmp(arg, "REALLOC")) {
         pos = atoi(arg = strtok(NULL, delim));
         size = atoi(arg = strtok(NULL, delim));
-        printf("%d\n", realloc_(block, pos, size));
+        printf("%d\n", realloc_(arena, pos, size));
     } else if (!strcmp(arg, "ALLOCALIGNED")) {
         size = atoi(arg = strtok(NULL, delim));
         align = atoi(arg = strtok(NULL, delim));
-        printf("%d\n", ALLOCALIGNED(block, size, align));
+        printf("%d\n", ALLOCALIGNED(arena, size, align));
     } else if (!strcmp(arg, "DEFRAGMENT")) {
         int i;
-        defrag_t *def = calloc((block->len - 4) / 13, sizeof(defrag_t));
+        defrag_t *def = calloc((arena->len - 4) / 13, sizeof(defrag_t));
 
         if (def == NULL) {
-            printf("[-]¡No se pudo realizar la desfragmentación!\n");
+            printf("The defragmentation could not be performed!\n");
             return -1;
         }
 
-        defragmentar(block, def);
+        defragmentar(arena, def);
 
         for (i = 0; def[i].oldPos; ++i) {
-            printf("Posición antes de desfragmentar: %d\t", def[i].oldPos);
-            printf("Posición después de la desfragmentación: %d\n", def[i].newPos);
+            printf("Position before defrag: %d\t", def[i].oldPos);
+            printf("Position after defrag: %d\n", def[i].newPos);
         }
 
         free(def);
     } else if (!strcmp(arg, "INITIALIZE")) {
-        block->len = atoi(arg = strtok(NULL, delim));
-        inicializar(block);
+        arena->len = atoi(arg = strtok(NULL, delim));
+        inicializar(arena);
 
-        if (block->mem == NULL) {
-            printf("[-]¡No se pudo asignar la arena!\n");
+        if (arena->mem == NULL) {
+            printf("The arena could not be allocated!\n");
             return -1;
         }
     } else if (!strcmp(arg, "FINALIZE")) {
-        finalizar(block);
+        FINALIZE(arena);
         return 0;
     } else {
-        printf("[-]¡Comando desconocido!\n");
+        printf("Unknown command!\n");
     }
 
     return 1;

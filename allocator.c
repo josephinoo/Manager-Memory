@@ -1,50 +1,47 @@
-// Copyright 2017 Dutu Teodor-Stefan
+
 
 #include "./allocator.h"
 
-int32_t ALLOC(arena_t *arena, int32_t size) {
-    int32_t *prevIndex = (int32_t*)arena->mem;
-    int32_t *nextIndex = (int32_t*)(arena->mem + *prevIndex);
+int32_t asignar(arena_t *block, int32_t size) {
+    int32_t *prevIndex = (int32_t*)block->mem;
+    int32_t *nextIndex = (int32_t*)(block->mem + *prevIndex);
     int32_t prevFinal = 4;
 
     size += 12;
 
-    if (size > arena->len - 4) {
+    if (size > block->len - 4) {
         return 0;
-    }  // daca trebuie alocati mai multi octeti decat dimensiunea arenei
-
+    }  
     if (!*prevIndex) {
         *prevIndex = 4;
         *(prevIndex + 1) = 0;
         *(prevIndex + 2) = 0;
         *(prevIndex + 3) = size;
         return (*prevIndex + 12);
-    }  // daca nu exista nicio zona alocata
+    } 
 
     while (*nextIndex && *prevIndex - prevFinal < size) {
         prevIndex = nextIndex;
-        nextIndex = (int32_t*)(arena->mem + *nextIndex);
+        nextIndex = (int32_t*)(block->mem + *nextIndex);
         prevFinal = *(prevIndex + 2) + *(nextIndex + 1);
-    }  // se cauta pozitia in care poate fi alocata zona
+    }  
 
     if (*prevIndex - prevFinal >= size) {
-        allocBtw(arena, prevIndex, nextIndex, prevFinal, size);
+        allocBtw(block, prevIndex, nextIndex, prevFinal, size);
         return (*prevIndex + 12);
-    }  // daca zona noua se poate aloca intre 2 zone deja alocate
-
-    if (arena->len - *prevIndex - *(nextIndex + 2) < size) {
+    }  
+    if (block->len - *prevIndex - *(nextIndex + 2) < size) {
         return 0;
-    }  // daca noua zona trebuie alocata la finalul arenei, dar nu are loc
-
+    }  
     prevFinal = *prevIndex + *(nextIndex + 2);
-    allocLast(arena, prevIndex, nextIndex, prevFinal, size);
+    allocLast(block, prevIndex, nextIndex, prevFinal, size);
     return  (*nextIndex + 12);
-    // daca zona trebuie alocata dupa ultima zona disponibila in arena
-}  // functia returneaza pozitia de incepere a zonei utilizabile alocate
+    
+}  
 
-void allocBtw(arena_t *arena, int32_t *prev, int32_t *next,
+void allocBtw(arena_t *block, int32_t *prev, int32_t *next,
               int32_t start, int32_t size) {
-    int32_t *newIndex = (int32_t*)(arena->mem + start);
+    int32_t *newIndex = (int32_t*)(block->mem + start);
 
     *newIndex = *prev;
     *(newIndex + 1) = *(next + 1);
@@ -53,9 +50,9 @@ void allocBtw(arena_t *arena, int32_t *prev, int32_t *next,
     *(next + 1) = *prev;
 }
 
-void allocLast(arena_t *arena, int32_t *prev, int32_t *next,
+void allocLast(arena_t *block, int32_t *prev, int32_t *next,
                int32_t start, int32_t size) {
-    int32_t *newIndex = (int32_t*)(arena->mem + start);
+    int32_t *newIndex = (int32_t*)(block->mem + start);
 
     *next = start;
     *newIndex = 0;
@@ -63,70 +60,70 @@ void allocLast(arena_t *arena, int32_t *prev, int32_t *next,
     *(newIndex + 2) = size;
 }
 
-void DUMP(arena_t *arena) {
-    uchar_t *set, *byte, *end = arena->mem + arena->len - 1;
+void volcado(arena_t *block) {
+    uchar_t *set, *byte, *end = block->mem + block->len - 1;
     int32_t i;
 
-    for (set = arena->mem; set <= end; set += 16) {
-        printf("%08X\t", (int32_t)(set - arena->mem));
-        // se afiseaza indicele liniei
+    for (set = block->mem; set <= end; set += 16) {
+        printf("%08X\t", (int32_t)(set - block->mem));
+        
         byte = set;
 
         for (i = 0; i < 8 && byte <= end; ++i) {
             printf("%02X ", (int32_t)*(byte++));
-        }  // se afiseaza primul grup de 8 octeti
+        }  
 
         for (; i < 16 && byte <= end; ++i) {
             printf(" %02X", (int32_t)*(byte++));
-        }  // se afiseaza al doilea grup de 8 octeti
+        }  
         printf("\n");
     }
 
-    printf("%08X\n", arena->len);
+    printf("%08X\n", block->len);
 }
 
-void FREE(arena_t *arena, int32_t pos) {
-    int32_t *currIndex = (int32_t*)(arena->mem + pos - 12);
-    int32_t *nextIndex = (int32_t*)(arena->mem + *currIndex);
-    int32_t *prevIndex = (int32_t*)(arena->mem + *(currIndex + 1));
+void FREE(arena_t *block, int32_t pos) {
+    int32_t *currIndex = (int32_t*)(block->mem + pos - 12);
+    int32_t *nextIndex = (int32_t*)(block->mem + *currIndex);
+    int32_t *prevIndex = (int32_t*)(block->mem + *(currIndex + 1));
 
-    if (*currIndex) {  // daca zona de dealocat nu este ultima din arena
+    if (*currIndex) {  
         *prevIndex = *currIndex;
         *(nextIndex + 1) = *(currIndex + 1);
     } else {
         *prevIndex = 0;
-    }  // daca zona de dealocat este ultima
+    }  
 }
 
-void FILL(arena_t *arena, int32_t pos, int32_t  size, int32_t value) {
-    uchar_t *byte = arena->mem + pos;
+void llenar(arena_t *block, int32_t pos, int32_t  size, int32_t value) {
+    uchar_t *byte = block->mem + pos;
     uchar_t *end = byte + size - 1;
 
     for (; byte <= end; ++byte) {
         *byte = (uchar_t)value;
-    }  // se modifica size octeti unul cate unul
+    }  
 }
 
-void SHOW(arena_t *arena, char *arg) {
+void mostrar(arena_t *block, char *arg) {
     const char *delim = " \n";
     int32_t length;
 
     if (!strcmp(arg, "FREE")) {
-        SHOW_FREE(arena);
+        mostrar_free(block);
     } else if (!strcmp(arg, "USAGE")) {
-         SHOW_USAGE(arena);
+         mostrar_usage(block);
     } else if (!strcmp(arg, "ALLOCATIONS")) {
-        SHOW_ALLOC(arena);
+        mostrar_alloc(block);
     } else {
         length = atoi(arg = strtok(NULL, delim));
-        SHOW_MAP(arena, length);
+        mostrar_map(block, length);
     }
 }
 
-void SHOW_FREE(arena_t *arena) {
-    int32_t *prevIndex = (int32_t*)arena->mem;
-    int32_t *nextIndex = (int32_t*)(arena->mem + *prevIndex);
-    int32_t prevFinal = 4, freeBytes = arena->len - 4, freeBlocks = 1;
+void mostrar_free(arena_t *block) {
+    int32_t *prevIndex = (int32_t*)block->mem;
+    int32_t *nextIndex = (int32_t*)(block->mem + *prevIndex);
+    int32_t prevFinal = 4, freeBytes = block->len - 4, freeBlocks = 1;
 
     while (*prevIndex) {
         freeBytes -= *(nextIndex + 2);
@@ -135,23 +132,22 @@ void SHOW_FREE(arena_t *arena) {
             ++freeBlocks;
         }
 
-        if (*prevIndex + *(nextIndex + 2) == arena->len) {
+        if (*prevIndex + *(nextIndex + 2) == block->len) {
             --freeBlocks;
-        }  // daca nu exista octeti liberi la sfarsitul arenei
-
+        }  
         prevIndex = nextIndex;
-        nextIndex = (int32_t*)(arena->mem + *nextIndex);
+        nextIndex = (int32_t*)(block->mem + *nextIndex);
         prevFinal = *(prevIndex + 2) + *(nextIndex + 1);
-    }  // se verifica zonele libere dintre fiecare 2 zone alocate
+    }  
 
     printf("%d blocks (%d bytes) free\n", freeBlocks, freeBytes);
 }
 
-void SHOW_USAGE(arena_t *arena) {
-    int32_t *prevIndex = (int32_t*)arena->mem;
-    int32_t *nextIndex = (int32_t*)(arena->mem + *prevIndex);
+void mostrar_usage(arena_t *block) {
+    int32_t *prevIndex = (int32_t*)block->mem;
+    int32_t *nextIndex = (int32_t*)(block->mem + *prevIndex);
     int32_t eff, frag, prevFinal = 4;
-    int32_t freeBytes = arena->len - 4, freeBlocks = 1;
+    int32_t freeBytes = block->len - 4, freeBlocks = 1;
     int32_t usedBytes = 0, usedBlocks = 0;
 
     while (*prevIndex) {
@@ -161,156 +157,151 @@ void SHOW_USAGE(arena_t *arena) {
 
         if (*prevIndex - prevFinal > 0) {
             ++freeBlocks;
-        }  // daca exista un spatiu gol intre cele 2 zone
+        } 
 
-        if (*prevIndex + *(nextIndex + 2) == arena->len) {
+        if (*prevIndex + *(nextIndex + 2) == block->len) {
             --freeBlocks;
-        }  // daca nu exista octeti liberi la sfarsitul arenei
-
+        }  
         prevIndex = nextIndex;
-        nextIndex = (int32_t*)(arena->mem + *nextIndex);
+        nextIndex = (int32_t*)(block->mem + *nextIndex);
         prevFinal = *(prevIndex + 2) + *(nextIndex + 1);
-    }  // se analizeaza zonele alocate una cate una
+    }  
+    printf("%d blocks (%d bytes) usados\n", usedBlocks, usedBytes);
 
-    printf("%d blocks (%d bytes) used\n", usedBlocks, usedBytes);
-
-    eff = 100 * usedBytes / (arena->len - freeBytes);
-    printf("%d%% efficiency\n", eff);
+    eff = 100 * usedBytes / (block->len - freeBytes);
+    printf("%d%% Eficiencia", eff);
 
     frag = usedBlocks ? 100 * (freeBlocks - 1) / usedBlocks : 0;
-    printf("%d%% fragmentation\n", frag);
+    printf("%d%% Fragmentacion\n", frag);
 }
 
-void SHOW_ALLOC(arena_t *arena) {
-    int32_t *prevIndex = (int32_t*)arena->mem;
-    int32_t *nextIndex = (int32_t*)(arena->mem + *prevIndex);
+void mostrar_alloc(arena_t *block) {
+    int32_t *prevIndex = (int32_t*)block->mem;
+    int32_t *nextIndex = (int32_t*)(block->mem + *prevIndex);
     int32_t freeBytes, prevFinal = 4;
 
-    printf("OCCUPIED 4 bytes\n");  // zona de start
+    printf("Ocupados 4 bytes\n");  
 
     while (*prevIndex) {
         freeBytes = *prevIndex - prevFinal;
 
         if (freeBytes) {
-            printf("FREE %d bytes\n", freeBytes);
+            printf("Libres%d bytes\n", freeBytes);
         }
 
-        printf("OCCUPIED %d bytes\n", *(nextIndex + 2));
+        printf("OCupados %d bytes\n", *(nextIndex + 2));
 
         prevFinal = *(nextIndex + 2) + *prevIndex;
         prevIndex = nextIndex;
-        nextIndex = (int32_t*)(arena->mem + *nextIndex);
-    }  // se analizeaza arena zona cu zona
+        nextIndex = (int32_t*)(block->mem + *nextIndex);
+    }  
 
-    if (arena->len - prevFinal) {
-        printf("FREE %d bytes\n", arena->len - prevFinal);
-    }  // daca raman octeti liberi la finalul arenei, se afisaza
+    if (block->len - prevFinal) {
+        printf("Libres %d bytes\n", block->len - prevFinal);
+    }  
 }
 
-void SHOW_MAP(arena_t *arena, int32_t length) {
-    int32_t *prevIndex = (int32_t*)arena->mem;
-    int32_t *nextIndex = (int32_t*)(arena->mem + *prevIndex);
+void mostrar_map(arena_t *block, int32_t tamanio) {
+    int32_t *prevIndex = (int32_t*)block->mem;
+    int32_t *nextIndex = (int32_t*)(block->mem + *prevIndex);
     int32_t toPrint, prevFinal = 4, count = 1;
-    double x = (double)arena->len / (double)length;
+    double x = (double)block->len / (double)tamanio;
     double bytes = 4, extra;
 
     toPrint = (int32_t)(bytes / x);
     extra = x * (double)toPrint == bytes ? 0 : x * (double)(++toPrint) - bytes;
-    printMem(toPrint, &count, '*');
+    printMemoria(toPrint, &count, '*');
 
     while (*prevIndex) {
         bytes = (double)(*prevIndex - prevFinal) - extra;
         toPrint = (int32_t)(bytes / x);
         extra = bytes - x * (double)toPrint;
-        printMem(toPrint, &count, '.');
-        // se calculeaza numarul de octeti liberi si se afiseaza '.'
-
+        printMemoria(toPrint, &count, '.');
+    
         bytes = (double)*(nextIndex + 2) + extra;
         if (bytes > 0) {
             toPrint = (int32_t)(bytes / x);
             extra =
             x * (double)toPrint == bytes ? 0 : x * (double)(++toPrint) - bytes;
-            printMem(toPrint, &count, '*');
+            printMemoria(toPrint, &count, '*');
         } else {
             extra = -bytes;
-        }  // daca octetii ocupati nu au fost analizati inainte se afiseaza '*'
+        }  
 
         prevFinal = *(nextIndex + 2) + *prevIndex;
         prevIndex = nextIndex;
-        nextIndex = (int32_t*)(arena->mem + *nextIndex);
-    }  // sunt parcurse zonele ocupate si se afiseaza '.' sau '*' dupa caz
-
-    toPrint = (int32_t)(((double)(arena->len - prevFinal) - extra) / x);
-    printMem(toPrint, &count, '.');
-    // se analizeaza ultimii octeti liberi din arena
+        nextIndex = (int32_t*)(block->mem + *nextIndex);
+    } 
+    toPrint = (int32_t)(((double)(block->len - prevFinal) - extra) / x);
+    printMemoria(toPrint, &count, '.');
+   
 
     if (count % 80) {
         printf("\n");
-    }  // se va pune cursorul pe un rand nou daca acest lucur nu s-a facut deja
+    }  
 }
 
-void printMem(int32_t toPrint, int32_t *count, char c) {
+void printMemoria(int32_t toPrint, int32_t *contador, char c) {
     int32_t i;
 
-    for (i = 0; i < toPrint; ++i, ++*count) {
+    for (i = 0; i < toPrint; ++i, ++*contador) {
         printf("%c", c);
-        if (!(*count % 80)) {
+        if (!(*contador % 80)) {
             printf("\n");
         }
     }
 }
 
-int32_t ALLOCALIGNED(arena_t *arena, int32_t size, int32_t align) {
-    int32_t *prevIndex = (int32_t*)arena->mem;
-    int32_t *nextIndex = (int32_t*)(arena->mem + *prevIndex);
+int32_t ALLOCALIGNED(arena_t *block, int32_t size, int32_t align) {
+    int32_t *prevIndex = (int32_t*)block->mem;
+    int32_t *nextIndex = (int32_t*)(block->mem + *prevIndex);
     int32_t *newIndex;
     int32_t prevFinal = 4, pos = align < 16 ? 16 : align;
 
     if (!*prevIndex) {
-        if (pos + size - 1 > arena->len) {
-            return 0;  // daca nu este suficient loc in matrice
+        if (pos + size - 1 > block->len) {
+            return 0;  
         }
 
-        newIndex = (int*)(arena->mem + pos - 12);
+        newIndex = (int*)(block->mem + pos - 12);
         *newIndex = 0;
         *(newIndex + 1) = 0;
         *(newIndex + 2) = size + 12;
         *prevIndex = pos - 12;
-        return pos;  // daca nu mai exista nicio alta zona alocata
+        return pos;  
     }
 
     while (*nextIndex) {
-        pos = findPos(pos, align, size, prevFinal, *prevIndex);
+        pos = buscarPos(pos, align, size, prevFinal, *prevIndex);
 
         if (pos - 12 >= prevFinal && pos + size - 1 < *prevIndex) {
-            allocBtw(arena, prevIndex, nextIndex, pos - 12, size + 12);
+            allocBtw(block, prevIndex, nextIndex, pos - 12, size + 12);
             return pos;
-        }  // noua zona se poate aloca intre 2 zone deja alocate
+        }  
 
         prevIndex = nextIndex;
-        nextIndex = (int*)(arena->mem + *nextIndex);
+        nextIndex = (int*)(block->mem + *nextIndex);
         prevFinal = *(nextIndex + 1) + *(prevIndex + 2);
-    }  // se cauta sa se aloce noua zona intre 2 zone deja alocate
-
-    pos = findPos(pos, align, size, prevFinal, *prevIndex);
+    }  
+    pos = buscarPos(pos, align, size, prevFinal, *prevIndex);
 
     if (pos - 12 >= prevFinal && pos + size <= *prevIndex) {
-        allocBtw(arena, prevIndex, nextIndex, pos - 12, size + 12);
+        allocBtw(block, prevIndex, nextIndex, pos - 12, size + 12);
         return pos;
-    }  // noua zona se poate aloca intre 2 zone deja alocate
+    }  
 
     prevFinal = *prevIndex + *(nextIndex + 2);
-    pos = findPos(pos, align, size, prevFinal, arena->len);
+    pos = buscarPos(pos, align, size, prevFinal, block->len);
 
-    if (pos + size > arena->len) {
+    if (pos + size > block->len) {
         return 0;
-    }  // noua zona nu are loc in arena
+    }  
 
-    allocLast(arena, prevIndex, nextIndex, pos - 12, size + 12);
-    return pos;  // zona cea noua are loc dupa utima zona alocata
-}  // algoritmul este similar cu cel folosit la ALLOC
+    allocLast(block, prevIndex, nextIndex, pos - 12, size + 12);
+    return pos;  
+}  
 
-int32_t findPos(int32_t pos, int32_t align, int32_t size,
+int32_t buscarPos(int32_t pos, int32_t align, int32_t size,
                 int32_t prevFinal, int32_t nextFirst) {
     while (pos < prevFinal) {
         pos <<= 1;
@@ -325,48 +316,46 @@ int32_t findPos(int32_t pos, int32_t align, int32_t size,
     }
 
     return pos;
-    /* se cauta o pozitie aliniata la align care sa incapa intre
-    prevFinal si nextFirst */
+    
 }
 
-int32_t REALLOC(arena_t *arena, int32_t pos, int32_t size) {
-    int32_t *currIndex = (int32_t*)(arena->mem + pos - 12);
-    int32_t *nextIndex = (int32_t*)(arena->mem + *currIndex);
-    int32_t *prevIndex = (int32_t*)(arena->mem + *(currIndex + 1));
+int32_t realloc_(arena_t *block, int32_t pos, int32_t size) {
+    int32_t *currIndex = (int32_t*)(block->mem + pos - 12);
+    int32_t *nextIndex = (int32_t*)(block->mem + *currIndex);
+    int32_t *prevIndex = (int32_t*)(block->mem + *(currIndex + 1));
     int32_t newPos;
 
-    FREE(arena, pos);
+    FREE(block, pos);
 
-    if (!(newPos = ALLOC(arena, size))) {
+    if (!(newPos = asignar(block, size))) {
         *prevIndex = pos - 12;
         if (*currIndex) {
             *(nextIndex + 1) = pos - 12;
-        }  // se reface structura pe care o avea arena inainte de realocare
+        }  
         return 0;
-    }  // daca zona nu poate fi realocata
-
-    copyMem(arena, currIndex, newPos, size);
+    }  
+    copiarMemoria(block, currIndex, newPos, size);
 
     return newPos;
 }
 
-void copyMem(arena_t *arena, int32_t *currIndex, int newPos, int memSize) {
+void copiarMemoria(arena_t *block, int32_t *currIndex, int newPos, int memSize) {
     uchar_t *endB, *endS, *byte, *startPos;
 
     byte = (uchar_t*)currIndex + 12;
-    endB = byte + *(currIndex + 2) - 13;  // sfarsitul zonei de realocat
-    startPos = arena->mem + newPos;
-    endS = startPos + memSize - 1;  // sfarsitul zonei realocate
+    endB = byte + *(currIndex + 2) - 13;  
+    startPos = block->mem + newPos;
+    endS = startPos + memSize - 1;  
 
     for (; startPos <= endS && byte <= endB; ++startPos, ++byte) {
         *startPos = *byte;
-    }  // copierea memoriei din zona initiala in cea realocata
+    }  
 }
 
-void DEFRAG(arena_t *arena, defrag_t *def) {
-    int32_t *prevIndex = (int32_t*)(arena->mem);
-    int32_t *currIndex = (int32_t*)(arena->mem + *prevIndex);
-    int32_t *nextIndex = (int32_t*)(arena->mem + *currIndex);
+void defragmentar(arena_t *block, defrag_t *def) {
+    int32_t *prevIndex = (int32_t*)(block->mem);
+    int32_t *currIndex = (int32_t*)(block->mem + *prevIndex);
+    int32_t *nextIndex = (int32_t*)(block->mem + *currIndex);
     int32_t prevFinal = 4, i = 0;
 
     while (*currIndex) {
@@ -374,87 +363,83 @@ void DEFRAG(arena_t *arena, defrag_t *def) {
             def[i].oldPos = *prevIndex + 12;
             def[i++].newPos = prevFinal + 12;
 
-            FREE(arena, *prevIndex + 12);
+            FREE(block, *prevIndex + 12);
             prevFinal = *(currIndex + 1) ?
                 *(currIndex + 1) + *(prevIndex + 2) : 4;
-            allocBtw(arena, prevIndex, nextIndex,
+            allocBtw(block, prevIndex, nextIndex,
                      prevFinal, *(currIndex + 2));
-            copyMem(arena, currIndex, *prevIndex + 12,
+            copiarMemoria(block, currIndex, *prevIndex + 12,
                     *(currIndex + 2) - 12);
-            currIndex = (int32_t*)(arena->mem + *prevIndex);
+            currIndex = (int32_t*)(block->mem + *prevIndex);
         }
 
         prevIndex = currIndex;
         currIndex = nextIndex;
-        nextIndex = (int32_t*)(arena->mem + *nextIndex);
+        nextIndex = (int32_t*)(block->mem + *nextIndex);
         prevFinal = *(currIndex + 1) + *(prevIndex + 2);
-    }  // se muta toate zonele pana la ultima
-
+    }  
     if (prevFinal != *prevIndex && *prevIndex) {
         def[i].oldPos = *prevIndex + 12;
         def[i++].newPos = prevFinal + 12;
 
         *prevIndex = *(currIndex + 1) ?
             *(currIndex + 1) + *(prevIndex + 2) : 4;
-        // daca exista o singura zona in arena, aceasta se muta pe pozitia 4
+        
         nextIndex = currIndex;
 
-        currIndex = (int32_t*)(arena->mem + *prevIndex);
+        currIndex = (int32_t*)(block->mem + *prevIndex);
         *currIndex = *nextIndex;
         *(currIndex + 1) = *(nextIndex + 1);
         *(currIndex + 2) = *(nextIndex + 2);
-        copyMem(arena, nextIndex, *prevIndex + 12, *(currIndex + 2) - 12);
-    }  // se trateaza cazul ultimei zone din memorie
+        copiarMemoria(block, nextIndex, *prevIndex + 12, *(currIndex + 2) - 12);
+    }  
 }
 
-void SAFE_FILL(arena_t *arena, int32_t pos, int32_t  size, int32_t value) {
+void safe_fill(arena_t *block, int32_t pos, int32_t  size, int32_t value) {
     int32_t *currIndex;
     uchar_t *byte, *end;
-    int32_t startPos = checkPos(arena, pos), finPos;
+    int32_t startPos = verificarPos(block, pos), finPos;
 
     if (!startPos) {
-        printf("Invalid access to memory!\n");
+        printf("[-]¡Acceso no válido a la memoria!\n");
     } else {
-        currIndex = (int32_t*)(arena->mem + startPos - 12);
+        currIndex = (int32_t*)(block->mem + startPos - 12);
         finPos = startPos + *(currIndex + 2) - 13 < pos + size ?
               startPos + *(currIndex + 2) - 13 : pos + size - 1;
-        end = arena->mem + finPos;
-        // se determina pozitia de dupa ultimul octet ce trebuie modificat
+        end = block->mem + finPos;
+        
 
-        for (byte = arena->mem + pos; byte <= end; ++byte) {
+        for (byte = block->mem + pos; byte <= end; ++byte) {
             *byte = (uchar_t)value;
-        }  // se modifica maximum size octeti, dintre cei alocati
-
-        printf("%d byte(s) modified\n", finPos - pos + 1);
+        }  
+        printf("[+] %d byte(s) modificados\n", finPos - pos + 1);
     }
 }
 
-int32_t checkPos(arena_t *arena, int32_t pos) {
-    int32_t *prevIndex = (int32_t*)(arena->mem);
-    int32_t *nextIndex = (int32_t*)(arena->mem + *prevIndex);
+int32_t verificarPos(arena_t *block, int32_t pos) {
+    int32_t *prevIndex = (int32_t*)(block->mem);
+    int32_t *nextIndex = (int32_t*)(block->mem + *prevIndex);
 
-    if (arena->len <= pos || pos < 4) {
+    if (block->len <= pos || pos < 4) {
         return 0;
-    }  // daca pozitia verificata se afla in afara arenei sau in zona de start
-
+    }  
     while (*prevIndex && pos > *prevIndex) {
         if (pos >= *prevIndex + 12 && pos < *prevIndex + *(nextIndex + 2)) {
             return (*prevIndex + 12);
         }
 
         prevIndex = nextIndex;
-        nextIndex = (int32_t*)(arena->mem + *nextIndex);
-    }  // se cauta zona in care se afla pos
+        nextIndex = (int32_t*)(block->mem + *nextIndex);
+    }  
 
     return 0;
-    /* functia retruneaza indicele de inceput al zonei in care se afla pos
-    sau 0 daca acesta nu se gaseste in arena sau nu este intr-o zona alocata */
+    
 }
 
-void INITIALIZE(arena_t *arena) {
-    arena->mem = (uchar_t*)calloc(arena->len, sizeof(uchar_t));
-}  // alocarea memoriei pentru arena
+void inicializar(arena_t *block) {
+    block->mem = (uchar_t*)calloc(block->len, sizeof(uchar_t));
+}  
 
-void FINALIZE(arena_t *arena) {
-    free(arena->mem);
-}  // se dealoca memoria alocata la inceput
+void finalizar(arena_t *block) {
+    free(block->mem);
+} 

@@ -19,40 +19,31 @@ typedef struct {
     int32_t oldPos, newPos;
 } defrag_t;
 
-void INITIALIZE(arena_t *arena);
-void FINALIZE(arena_t *arena);
-int32_t ALLOC(arena_t *arena, int32_t size);
-void allocBtw(arena_t *arena, int32_t *prev, int32_t *next,
+void inicializar(arena_t *block);
+void finalizar(arena_t *block);
+int32_t asignar(arena_t *block, int32_t size);
+void allocBtw(arena_t *block, int32_t *prev, int32_t *next,
               int32_t start, int32_t size);
-// insereaza o zona intre 2 indici (pointeri) din arena
 void allocLast(arena_t *arena, int32_t *prev, int32_t *next,
                int32_t start, int32_t size);
-// adauga o zona dupa ultima alocata anterior
-void DUMP(arena_t *arena);
+void volcado(arena_t *arena);
 void FREE(arena_t *arena, int32_t pos);
-void FILL(arena_t *arena, int32_t pos, int32_t size, int32_t value);
-void SAFE_FILL(arena_t *arena, int32_t pos, int32_t size, int32_t value);
-// este un FILL care nu suprascrie zone invalide sau nealocate
-void SHOW(arena_t *arena, char *arg);
-void SHOW_FREE(arena_t *arena);
-void SHOW_USAGE(arena_t *arena);
-void SHOW_ALLOC(arena_t *arena);
-void SHOW_MAP(arena_t *arena, int32_t l);
-void printMem(int32_t toPrint, int32_t *count, char c);
-// afiseaza caracteul c (* sau .), de toPrint ori, in formatul cerut de SHOW_MAP
+void llenar(arena_t *arena, int32_t pos, int32_t size, int32_t value);
+void safe_fill(arena_t *arena, int32_t pos, int32_t size, int32_t value);
+void mostrar(arena_t *arena, char *arg);
+void mostrar_free(arena_t *arena);
+void mostrar_usage(arena_t *arena);
+void mostrar_alloc(arena_t *arena);
+void mostrar_map(arena_t *arena, int32_t l);
+void printMemoria(int32_t toPrint, int32_t *count, char c);
 int32_t ALLOCALIGNED(arena_t *arena, int32_t size, int32_t align);
-int32_t findPos(int32_t pos, int32_t align, int32_t size,
+int32_t buscarPos(int32_t pos, int32_t align, int32_t size,
                 int32_t prevFinal, int32_t nextFirst);
-// functia cauta pozitia la care ar putea fi alocata noua zona aliniata la align
-int32_t REALLOC(arena_t *arena, int32_t pos, int32_t size);
-void copyMem(arena_t *arena, int32_t *currIndex, int newPos, int size);
-/* copiaza octetii din zona currIndex in zona newPos,
-tinand seama de dimensiunile acestor zone*/
-void DEFRAG(arena_t *arena, defrag_t *def);
-/* alipeste toate zonele alocate din arena si intoarce
-un vector cu pozitiile vechi si noi ale acestora */
-int32_t checkPos(arena_t *arena, int32_t pos);
-/* returneaza 0 daca pos nu face parte dintr-o zona disponibila sau
-pozitia de inceput a zonei din care acesta face parte in caz contrar*/
+
+int32_t realloc_(arena_t *arena, int32_t pos, int32_t size);
+void copiarMemoria(arena_t *arena, int32_t *currIndex, int newPos, int size);
+void defragmentar(arena_t *arena, defrag_t *def);
+int32_t verificarPos(arena_t *arena, int32_t pos);
+
 
 #endif
