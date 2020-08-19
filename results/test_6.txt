@@ -1,0 +1,15 @@
+16
+48
+1 blocks (32 bytes) free
+2 blocks (40 bytes) usados
+58% Eficiencia 0% Fragmentacion
+Ocupados 4 bytes
+OCupados 32 bytes
+OCupados 32 bytes
+Libres 32 bytes
+2 blocks (64 bytes) free
+[-]¡Comando desconocido!
+Ocupados 4 bytes
+Libres32 bytes
+OCupados 32 bytes
+Libres 32 bytes

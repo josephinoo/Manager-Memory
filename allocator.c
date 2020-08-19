@@ -110,9 +110,9 @@ void mostrar(arena_t *block, char *arg) {
 
     if (!strcmp(arg, "FREE")) {
         mostrar_free(block);
-    } else if (!strcmp(arg, "USAGE")) {
+    } else if (!strcmp(arg, "USO")) {
          mostrar_usage(block);
-    } else if (!strcmp(arg, "ALLOCATIONS")) {
+    } else if (!strcmp(arg, "ASIGNACIONES")) {
         mostrar_alloc(block);
     } else {
         length = atoi(arg = strtok(NULL, delim));
@@ -169,7 +169,7 @@ void mostrar_usage(arena_t *block) {
     printf("%d blocks (%d bytes) usados\n", usedBlocks, usedBytes);
 
     eff = 100 * usedBytes / (block->len - freeBytes);
-    printf("%d%% Eficiencia", eff);
+    printf("%d%% Eficiencia ", eff);
 
     frag = usedBlocks ? 100 * (freeBlocks - 1) / usedBlocks : 0;
     printf("%d%% Fragmentacion\n", frag);

@@ -1,4 +1,4 @@
-// Copyright 2017 Dutu Teodor-Stefan
+
 
 #ifndef ALLOCATOR_H
 #define ALLOCATOR_H
