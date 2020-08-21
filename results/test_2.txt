@@ -1,0 +1,8 @@
+16
+41
+67
+2 blocks (28 bytes) usados
+50% Eficiencia 50% Fragmentacion
+1 blocks (96 bytes) free
+Ocupados 4 bytes
+Libres 96 bytes
