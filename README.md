@@ -1,12 +1,7 @@
 # Memory-Manager 
 ## Tarea 5
 ![header](https://bitbucket.org/ps-2020-1-p2-grupo1/tarea5/raw/59df4790ed30c219b1a701f3e19a31f712a6c333/image/header.png)
-# Reporte
 
-### Autores:
-
-- Joseph Avila
-- Ramiro Serrano
 
 ## **Objetivos**
 
