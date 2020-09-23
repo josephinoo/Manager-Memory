@@ -1,5 +1,7 @@
 # Memory-Manager 
-## Tarea 5
+ ![last-commit](https://img.shields.io/github/last-commit/eljosephavila123/Manager-Memory) ![followers](https://img.shields.io/github/followers/eljosephavila123?style=social ) ![forks](https://img.shields.io/github/forks/eljosephavila123/Manager-Memory?style=social)
+![size](https://img.shields.io/github/repo-size/eljosephavila123/Manager-Memory)
+![twitter](https://img.shields.io/twitter/follow/soyjosephavila?style=social)
 ![header](https://github.com/eljosephavila123/Memory-Allocator/blob/master/image/header.png?raw=true)
 # Reporte
 
