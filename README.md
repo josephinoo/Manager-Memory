@@ -1,6 +1,13 @@
 # Memory-Manager 
-## Tarea 5
-![header](https://bitbucket.org/ps-2020-1-p2-grupo1/tarea5/raw/59df4790ed30c219b1a701f3e19a31f712a6c333/image/header.png)
+
+ ![last-commit](https://img.shields.io/github/last-commit/eljosephavila123/Manager-Memory) ![followers](https://img.shields.io/github/followers/eljosephavila123?style=social ) ![forks](https://img.shields.io/github/forks/eljosephavila123/Manager-Memory?style=social)
+![size](https://img.shields.io/github/repo-size/eljosephavila123/Manager-Memory)
+![twitter](https://img.shields.io/twitter/follow/soyjosephavila?style=social)
+![header](https://github.com/eljosephavila123/Memory-Allocator/blob/master/image/header.png?raw=true)
+# Reporte
+
+
+
 
 
 ## **Objetivos**
@@ -19,7 +26,7 @@ Los usuarios pueden pedirle al asignador que libere una parte de la memoria asig
 
 En cualquier momento, la *arena* parece una sucesión de bloques libres u ocupados, como se muestra en la figura siguiente.
 
-![Reporte%20b051a698c0c74d8d84d820ccacab7b97/Untitled.png](https://bitbucket.org/ps-2020-1-p2-grupo1/tarea5/raw/d74f78deae39d172278dae2dc4f12df7afed3ee1/image/1.png)
+![Reporte%20b051a698c0c74d8d84d820ccacab7b97/Untitled.png](https://github.com/eljosephavila123/Memory-Allocator/blob/master/image/1.png?raw=true)
 
 Un problema que tiene cualquier asignador de memoria es cómo realizar un seguimiento de los bloques asignados, las porciones libres y su tamaño. Generalmente, existen dos soluciones para este problema:
 
@@ -32,7 +39,7 @@ A continuación, consideraremos la arena como una secuencia (vector) de N bytes 
 
 La siguiente figura ilustra la estructura detallada de la arena, durante la ejecución del programa:
 
-![Reporte%20b051a698c0c74d8d84d820ccacab7b97/Untitled%201.png](https://bitbucket.org/ps-2020-1-p2-grupo1/tarea5/raw/d74f78deae39d172278dae2dc4f12df7afed3ee1/image/2.png)
+![Reporte%20b051a698c0c74d8d84d820ccacab7b97/Untitled%201.png](https://github.com/eljosephavila123/Memory-Allocator/blob/master/image/2.png?raw=true)
 
 ### La estructura de un bloque
 
@@ -998,6 +1005,9 @@ sudo  apt-get update
 sudo  apt-get install multiarch-support
 ```
 
+
+### Autor:
+- Joseph Avila 
 ## Referencias
 
 [1]"Memory Allocators 101 - Write a simple memory allocator", Arjun Sreedharan, 2020. [Online]. Available: [https://arjunsreedharan.org/post/148675821737/memory-allocators-101-write-a-simple-memory](https://arjunsreedharan.org/post/148675821737/memory-allocators-101-write-a-simple-memory). [Accessed: 20- Aug- 2020].
